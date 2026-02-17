@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useState } from "react";
 import { I18nProvider, useI18n } from "@/lib/i18n";
 import { useCalculator } from "@/hooks/useCalculator";
 import { CalculatorForm } from "@/components/CalculatorForm";

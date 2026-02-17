@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n";
 import { WeeklyPlan, DayType } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge"; // Just in case, but I can use simple classes
+// import { Badge } from "@/components/ui/badge"; // Just in case, but I can use simple classes
 
 interface ResultsDisplayProps {
   plan: WeeklyPlan;
