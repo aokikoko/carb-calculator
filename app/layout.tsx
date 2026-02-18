@@ -16,6 +16,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Carb Calculator",
   description: "Free carb calculator for diet and nutrition.",
+  verification: {
+    google: "InTug4f1JADBT6DtVGD0SWTpHMhhebo2hpmTIHv5MP4",
+  },
   keywords: [
   "carb cycling calculator",
   "macro calculator",
