@@ -19,6 +19,12 @@ export interface DailyPlan {
 export interface WeeklyPlan {
   userData: UserData;
   dailyPlans: DailyPlan[]; // Array of 7 days
+  weeklyTotals: {
+    carbs: number;
+    protein: number;
+    fat: number;
+  };
+  dayTemplates: Record<DayType, DailyPlan>; // Store the base macros for each day type
 }
 
 export const LABELS = {
@@ -47,6 +53,12 @@ export const LABELS = {
     friday: "Friday",
     saturday: "Saturday",
     sunday: "Sunday",
+    weeklyTotals: "Weekly Totals",
+    totalCarbs: "Total Carbs",
+    totalProtein: "Total Protein",
+    totalFat: "Total Fat",
+    targetWeightTooltip: "Enter your target weight or expected weight.",
+    weightRequired: "Please enter your weight.",
   },
   zh: {
     title: "碳水循环计算器",
@@ -73,6 +85,12 @@ export const LABELS = {
     friday: "周五",
     saturday: "周六",
     sunday: "周日",
+    weeklyTotals: "周总摄入量",
+    totalCarbs: "周总碳水",
+    totalProtein: "周总蛋白质",
+    totalFat: "周总脂肪",
+    targetWeightTooltip: "请输入您的目标体重或预期体重。",
+    weightRequired: "请输入您的体重。",
   }
 };
 

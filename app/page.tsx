@@ -9,11 +9,11 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 
 function CalculatorApp() {
   const { t } = useI18n();
-  const { calculate, result } = useCalculator();
+  const { calculate, result, updateDay } = useCalculator();
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         <header className="flex justify-between items-center pb-6 border-b">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
             {t.title}
@@ -28,7 +28,7 @@ function CalculatorApp() {
                  </div>
                  <div className="w-full">
                     {result ? (
-                        <ResultsDisplay plan={result} />
+                        <ResultsDisplay plan={result} onUpdateDay={updateDay} />
                     ) : (
                         <div className="hidden lg:flex h-64 items-center justify-center text-muted-foreground border-2 border-dashed rounded-lg">
                             {t.calculate}

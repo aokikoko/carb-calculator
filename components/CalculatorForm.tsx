@@ -9,7 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CalculatorFormProps {
   onCalculate: (data: UserData) => void;
@@ -20,10 +27,15 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
   const [weight, setWeight] = useState<string>("");
   const [bodyType, setBodyType] = useState<BodyType>("ectomorph");
   const [goal, setGoal] = useState<Goal>("beginner_female");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!weight) return;
+    if (!weight) {
+      setError(t.weightRequired);
+      return;
+    }
+    setError(null);
     onCalculate({
       weight: parseFloat(weight),
       bodyType,
@@ -39,15 +51,31 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="weight">{t.weight}</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="weight">{t.weight}</Label>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{t.targetWeightTooltip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Input
               id="weight"
               type="number"
               placeholder="e.g. 70"
               value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              required
+              onChange={(e) => {
+                setWeight(e.target.value);
+                if (e.target.value) setError(null);
+              }}
+              className={error ? "border-red-500" : ""}
             />
+            {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
           </div>
 
           <div className="space-y-2">
@@ -76,7 +104,8 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
             <Label>{t.goal}</Label>
             <Select value={goal} onValueChange={(v) => setGoal(v as Goal)}>
               <SelectTrigger>
-                <SelectValue />
+                {goal === 'beginner_female' && t.beginner_female}
+                {goal === 'high_muscle' && t.high_muscle}
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="beginner_female">{t.beginner_female}</SelectItem>

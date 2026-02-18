@@ -5,11 +5,10 @@ import { UserData, WeeklyPlan, DailyPlan, DayType } from '@/lib/types';
 export function useCalculator() {
   const [result, setResult] = useState<WeeklyPlan | null>(null);
 
-  const calculate = (data: UserData) => {
+  const generateTemplates = (data: UserData) => {
     const { weight, bodyType, goal } = data;
 
-    // 1. Calculate Baselines (Weekly Total or Daily Base)
-    // Carbs
+    // 1. Calculate Baselines
     let carbMultiplier;
     if (bodyType === 'ectomorph') carbMultiplier = 3;
     else if (bodyType === 'mesomorph') carbMultiplier = 2.5;
@@ -27,69 +26,94 @@ export function useCalculator() {
     const dailyFatBase = weight * fatMultiplier;
     const weeklyFatTotal = dailyFatBase * 7;
 
-    // Protein (Daily constant)
-    // "Beginner/Female": 1.2g/kg
-    // "High Muscle": 1.5g/kg
+    // Protein
     const proteinMultiplier = goal === 'beginner_female' ? 1.2 : 1.5;
     const dailyProtein = weight * proteinMultiplier;
 
-    // 2. Distribute per Day Type
-    // High Carb (2 days)
-    const highCarbDay: DailyPlan = {
-      dayType: 'high_carb',
-      carbs: (weeklyCarbTotal * 0.50) / 2,
-      fat: (weeklyFatTotal * 0.15) / 2,
-      protein: dailyProtein,
+    return {
+      high_carb: {
+        dayType: 'high_carb' as DayType,
+        carbs: (weeklyCarbTotal * 0.50) / 2,
+        fat: (weeklyFatTotal * 0.15) / 2,
+        protein: dailyProtein,
+      },
+      medium_carb: {
+        dayType: 'medium_carb' as DayType,
+        carbs: (weeklyCarbTotal * 0.35) / 3,
+        fat: (weeklyFatTotal * 0.35) / 3,
+        protein: dailyProtein,
+      },
+      low_carb: {
+        dayType: 'low_carb' as DayType,
+        carbs: (weeklyCarbTotal * 0.15) / 2,
+        fat: (weeklyFatTotal * 0.50) / 2,
+        protein: dailyProtein,
+      },
     };
+  };
 
-    // Low Carb (2 days)
-    const lowCarbDay: DailyPlan = {
-      dayType: 'low_carb',
-      carbs: (weeklyCarbTotal * 0.15) / 2,
-      fat: (weeklyFatTotal * 0.50) / 2,
-      protein: dailyProtein,
-    };
+  const calculate = (data: UserData) => {
+    const templates = generateTemplates(data);
+    const { high_carb, medium_carb, low_carb } = templates;
 
-    // Medium Carb (3 days)
-    const mediumCarbDay: DailyPlan = {
-      dayType: 'medium_carb',
-      carbs: (weeklyCarbTotal * 0.35) / 3,
-      fat: (weeklyFatTotal * 0.35) / 3,
-      protein: dailyProtein,
-    };
-
-    // 3. Construct Weekly Plan (Example Schedule: Mon-Fri+Weekend)
-    // A common schedule: High, Low, Medium, High, Low, Medium, Medium
-    // Or: High (Legs), Low (Rest), Med (Push), High (Pull), Low (Rest), Med, Med
-    // For simplicity, let's just return the definitions of the days for now,
-    // OR return a fixed schedule. The prompt says "Distribute 2 High / 2 Low / 3 Medium per week".
-    // I will return a schedule:
-    // Mon: High
-    // Tue: Low
-    // Wed: Medium
-    // Thu: High
-    // Fri: Low
-    // Sat: Medium
-    // Sun: Medium
-
+    // Initial Schedule
     const schedule: DailyPlan[] = [
-      { ...highCarbDay }, // Mon
-      { ...lowCarbDay },  // Tue
-      { ...mediumCarbDay }, // Wed
-      { ...highCarbDay }, // Thu
-      { ...lowCarbDay },  // Fri
-      { ...mediumCarbDay }, // Sat
-      { ...mediumCarbDay }, // Sun
+      { ...high_carb }, // Mon
+      { ...low_carb },  // Tue
+      { ...medium_carb }, // Wed
+      { ...high_carb }, // Thu
+      { ...low_carb },  // Fri
+      { ...medium_carb }, // Sat
+      { ...medium_carb }, // Sun
     ];
+
+    const initialTotals = calculateWeeklyTotals(schedule);
 
     setResult({
       userData: data,
       dailyPlans: schedule,
+      weeklyTotals: initialTotals,
+      dayTemplates: templates,
     });
+  };
+
+  const updateDay = (dayIndex: number, newType: DayType) => {
+    if (!result) return;
+
+    // Ensure templates exist (handle stale state)
+    let templates = result.dayTemplates;
+    if (!templates) {
+      templates = generateTemplates(result.userData);
+    }
+
+    const newSchedule = [...result.dailyPlans];
+    // Use the template for the selected day type
+    newSchedule[dayIndex] = { ...templates[newType] };
+
+    const newTotals = calculateWeeklyTotals(newSchedule);
+
+    setResult({
+      ...result,
+      dailyPlans: newSchedule,
+      weeklyTotals: newTotals,
+      dayTemplates: templates,
+    });
+  };
+
+  const calculateWeeklyTotals = (dailyPlans: DailyPlan[]) => {
+    return dailyPlans.reduce(
+      (acc, day) => ({
+        carbs: acc.carbs + day.carbs,
+        protein: acc.protein + day.protein,
+        fat: acc.fat + day.fat,
+      }),
+      { carbs: 0, protein: 0, fat: 0 }
+    );
   };
 
   return {
     calculate,
+    updateDay,
     result,
   };
 }
