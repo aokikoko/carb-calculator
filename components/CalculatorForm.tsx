@@ -6,8 +6,9 @@ import { UserData, BodyType, Goal, CycleMode } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { PersonStanding, Zap } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { PersonStanding, Zap, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CalculatorFormProps {
@@ -41,12 +42,24 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
     <div className="w-full rounded-[1.5rem] bg-zinc-950 border border-zinc-800 p-6 shadow-2xl relative">
       <div className="relative z-10 space-y-8">
         <div>
-          <h2 className="text-xl font-bold text-white mb-6 bg-zinc-950 pb-4 border-b border-zinc-800 -mx-6 px-6 pt-2">{t.yourStats}</h2>
+          <h2 className="text-xl font-bold text-zinc-100 mb-6 bg-zinc-950 pb-4 border-b border-zinc-800 -mx-6 px-6 pt-2">{t.yourStats}</h2>
           
           <div className="space-y-6">
             {/* Weight Input */}
             <div className="space-y-3">
-              <Label className="text-zinc-400 text-sm font-medium">{t.weight}</Label>
+              <div className="flex items-center gap-2">
+                <Label className="text-zinc-400 text-sm font-medium">{t.weight}</Label>
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-zinc-500 hover:text-zinc-300 transition-colors cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
+                      <p className="text-sm">{t.targetWeightTooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <div className="relative">
                 <Input
                   type="number"
@@ -56,7 +69,7 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
                     if (e.target.value) setError(null);
                   }}
                   className={cn(
-                    "bg-zinc-900 border-zinc-800 h-12 text-lg px-4 text-white focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all",
+                    "bg-zinc-900 border-zinc-800 h-12 text-lg px-4 text-zinc-100 focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
                     error ? "border-red-500" : ""
                   )}
                 />
@@ -89,8 +102,7 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
                       bodyType === type && type === "mesomorph" ? "scale-110" : ""
                     )} />
                     <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">
-                       {/* Extremely short version of labels for these tight buttons */}
-                       {type === 'ectomorph' ? 'Ectomorph' : type === 'mesomorph' ? 'Mesomorph' : 'Endomorph'}
+                       {type === 'ectomorph' ? t.ectomorph : type === 'mesomorph' ? t.mesomorph : t.endomorph}
                     </span>
                   </button>
                 ))}
@@ -102,8 +114,7 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
                <Label className="text-zinc-400 text-sm font-medium">{t.goal}</Label>
                <Select value={goal} onValueChange={(v) => setGoal(v as Goal)}>
                   <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-zinc-300">
-                    {goal === 'beginner_female' && t.beginner_female}
-                    {goal === 'high_muscle' && t.high_muscle}
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
                     <SelectItem value="beginner_female" className="hover:bg-zinc-800 focus:bg-zinc-800">{t.beginner_female}</SelectItem>
@@ -116,10 +127,7 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
                <Label className="text-zinc-400 text-sm font-medium">{t.cycleMode}</Label>
                <Select value={mode} onValueChange={(v) => setMode(v as CycleMode)}>
                   <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-zinc-300">
-                    {mode === 'maintenance' && t.maintenance}
-                    {mode === 'fat_loss' && t.fat_loss}
-                    {mode === 'muscle_gain' && t.muscle_gain}
-                    {mode === 'custom' && t.custom}
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
                     <SelectItem value="maintenance" className="hover:bg-zinc-800 focus:bg-zinc-800">{t.maintenance}</SelectItem>
@@ -135,10 +143,11 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
 
         <Button 
           onClick={() => handleSubmit()}
-          className="w-full h-14 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-base shadow-[0_4px_14px_rgba(249,115,22,0.3)] transition-all uppercase tracking-wider flex items-center justify-center mt-8 cursor-pointer relative overflow-hidden group"
+          className="w-full h-14 rounded-xl bg-orange-600 hover:bg-orange-500 text-zinc-50 font-bold text-base shadow-[0_4px_14px_rgba(249,115,22,0.3)] transition-all uppercase tracking-wider flex items-center justify-center mt-8 cursor-pointer relative overflow-hidden group"
         >
           <span className="relative z-10 flex items-center">
-            CALCULATE MY PLAN ⚡️
+            CALCULATE MY PLAN 
+            <Zap className="ml-2 h-5 w-5 fill-yellow-300 text-yellow-400 group-hover:scale-110 transition-transform" />
           </span>
         </Button>
       </div>
