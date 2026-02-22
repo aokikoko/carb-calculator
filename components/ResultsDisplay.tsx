@@ -77,7 +77,7 @@ export function ResultsDisplay({ plan, onUpdateDay }: ResultsDisplayProps) {
         </div>
 
         {plan.weeklyTotals && (
-          <div className="pt-6">
+          <div className="pt-1">
             <h3 className="text-xl font-bold text-zinc-100 mb-4 tracking-tight">{t.weeklyTotals}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800 flex flex-col justify-center">

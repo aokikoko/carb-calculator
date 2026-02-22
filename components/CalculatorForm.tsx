@@ -39,7 +39,7 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
   };
 
   return (
-    <div className="w-full rounded-[1.5rem] bg-zinc-950 border border-zinc-800 p-6 shadow-2xl relative">
+    <div className="w-full rounded-[1.5rem] bg-zinc-950 border border-orange-500/20 p-6 shadow-[0_0_40px_rgba(249,115,22,0.12)] relative transition-all duration-500 hover:shadow-[0_0_60px_rgba(249,115,22,0.25)] hover:border-orange-500/40">
       <div className="relative z-10 space-y-8">
         <div>
           <h2 className="text-xl font-bold text-zinc-100 mb-6 bg-zinc-950 pb-4 border-b border-zinc-800 -mx-6 px-6 pt-2">{t.yourStats}</h2>

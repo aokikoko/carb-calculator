@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useCalculator } from "@/hooks/useCalculator";
 import { CalculatorForm } from "@/components/CalculatorForm";
@@ -11,16 +10,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 export default function Home() {
   const { t } = useI18n();
   const { calculate, result, updateDay } = useCalculator();
-  const resultsRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll to results immediately when result state changes
-  useEffect(() => {
-    if (result && resultsRef.current) {
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
-    }
-  }, [result]);
 
   return (
     <div className="w-full flex flex-col relative pb-12">
@@ -40,9 +29,9 @@ export default function Home() {
         </div>
 
         {/* Right Side: Results Dashboard (8/12) */}
-        <div ref={resultsRef} className="lg:col-span-8 relative scroll-mt-6">
+        <div className="lg:col-span-8 relative">
           {result ? (
-            <div className="w-full h-full relative" style={{ WebkitTransform: "translate3d(0,0,0)", transform: "translate3d(0,0,0)" }}>
+            <div className="w-full h-full relative animate-in fade-in zoom-in-[0.98] slide-in-from-bottom-6 duration-700 ease-out fill-mode-both" style={{ WebkitTransform: "translate3d(0,0,0)", transform: "translate3d(0,0,0)" }}>
                <ResultsDisplay plan={result} onUpdateDay={updateDay} />
             </div>
           ) : (
@@ -59,34 +48,36 @@ export default function Home() {
       </div>
 
       {/* FAQ Section Always Visible */}
-      <div className="space-y-6 pt-5 mt-2 border-t border-zinc-900/50 w-full animate-in fade-in duration-500">
-        <h2 className="text-2xl font-bold text-zinc-100 tracking-tight">{t.faqTitle}</h2>
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1" className="border-zinc-800">
-            <AccordionTrigger className="text-zinc-200 hover:text-zinc-100 hover:no-underline text-left font-semibold">
-              {t.faq1}
-            </AccordionTrigger>
-            <AccordionContent className="text-zinc-400 leading-relaxed text-sm">
-              {t.faq1Answer}
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2" className="border-zinc-800">
-            <AccordionTrigger className="text-zinc-200 hover:text-zinc-100 hover:no-underline text-left font-semibold">
-              {t.faq2}
-            </AccordionTrigger>
-            <AccordionContent className="text-zinc-400 leading-relaxed text-sm">
-              {t.faq2Answer}
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-3" className="border-zinc-800 border-b-0">
-            <AccordionTrigger className="text-zinc-200 hover:text-zinc-100 hover:no-underline text-left font-semibold">
-              {t.faq3}
-            </AccordionTrigger>
-            <AccordionContent className="text-zinc-400 leading-relaxed text-sm">
-              {t.faq3Answer}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      <div className="w-full mt-8 animate-in fade-in duration-500">
+        <div className="rounded-[1.5rem] border border-zinc-800 bg-zinc-950/50 p-6 md:p-8">
+          <h2 className="text-2xl font-bold text-zinc-100 tracking-tight mb-6">{t.faqTitle}</h2>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1" className="border-zinc-800">
+              <AccordionTrigger className="text-zinc-200 hover:text-zinc-100 hover:no-underline text-left font-semibold">
+                {t.faq1}
+              </AccordionTrigger>
+              <AccordionContent className="text-zinc-400 leading-relaxed text-sm">
+                {t.faq1Answer}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2" className="border-zinc-800">
+              <AccordionTrigger className="text-zinc-200 hover:text-zinc-100 hover:no-underline text-left font-semibold">
+                {t.faq2}
+              </AccordionTrigger>
+              <AccordionContent className="text-zinc-400 leading-relaxed text-sm">
+                {t.faq2Answer}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3" className="border-zinc-800 border-b-0">
+              <AccordionTrigger className="text-zinc-200 hover:text-zinc-100 hover:no-underline text-left font-semibold">
+                {t.faq3}
+              </AccordionTrigger>
+              <AccordionContent className="text-zinc-400 leading-relaxed text-sm pt-4 pb-2">
+                {t.faq3Answer}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </div>
   );
